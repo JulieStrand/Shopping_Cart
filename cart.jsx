@@ -97,7 +97,7 @@ const Products = (props) => {
       data: [],
     }
   );
-  console.log(`Rendering Products ${JSON.stringify(data.data)}`);
+  console.log(`Rendering Products ${JSON.stringify(data)}`);
   // Fetch Data
   const addToCart = (e) => {
     let name = e.target.name;
@@ -175,6 +175,8 @@ const Products = (props) => {
     const reducer = (accum, current) => accum + current;
     let newTotal = costs.reduce(reducer, 0);
     console.log(`total updated to ${newTotal}`);
+
+    
     return newTotal;
   };
   // Error when restocking: throws quick error in console then reloads/resets
@@ -183,9 +185,9 @@ const Products = (props) => {
     // be sure to know where data is set here
     let newItems = data.data.map((item) => {
       // here destructuring item into object w/desired fields
-      let { "attributes": { name, country, cost, instock } } = item;
+      let { attributes: { name, country, cost, instock } } = item;
       // return below is newItems (array of objects)
-      return { name, country, cost, instock };
+      return {attributes: { name, country, cost, instock } };
     });
     setItems([...items, ...newItems]);
   };
@@ -210,7 +212,7 @@ const Products = (props) => {
       <Row>
         <form
           onSubmit={(event) => {
-            restockProducts(`${query}`);
+            restockProducts(`http://localhost:1337/api/${query}`);
             console.log(`Restock called on ${query}`);
             event.preventDefault();
           }}
