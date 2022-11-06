@@ -88,7 +88,7 @@ const Products = (props) => {
     Image,
     Input,
   } = ReactBootstrap;
-  //  Fetch Data
+  //  Fetch Data by calling useDataApi()
   const { Fragment, useState, useEffect, useReducer } = React;
   const [query, setQuery] = useState("http://localhost:1337/api/products");
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
@@ -97,7 +97,7 @@ const Products = (props) => {
       data: [],
     }
   );
-  console.log(`Rendering Products ${JSON.stringify(data)}`);
+  console.log(`Rendering Products ${JSON.stringify(data.data)}`);
   // Fetch Data
   const addToCart = (e) => {
     let name = e.target.name;
@@ -175,15 +175,16 @@ const Products = (props) => {
     const reducer = (accum, current) => accum + current;
     let newTotal = costs.reduce(reducer, 0);
     console.log(`total updated to ${newTotal}`);
-
-    
     return newTotal;
   };
-  // TODO: implement the restockProducts function
+  // Error when restocking: throws quick error in console then reloads/resets
   const restockProducts = (url) => {
     doFetch(url);
-    let newItems = data.map((item) => {
-      let { name, country, cost, instock } = item;
+    // be sure to know where data is set here
+    let newItems = data.data.map((item) => {
+      // here destructuring item into object w/desired fields
+      let { "attributes": { name, country, cost, instock } } = item;
+      // return below is newItems (array of objects)
       return { name, country, cost, instock };
     });
     setItems([...items, ...newItems]);
@@ -209,7 +210,7 @@ const Products = (props) => {
       <Row>
         <form
           onSubmit={(event) => {
-            restockProducts(`http://localhost:1337/api/${query}`);
+            restockProducts(`${query}`);
             console.log(`Restock called on ${query}`);
             event.preventDefault();
           }}
